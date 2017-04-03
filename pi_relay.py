@@ -1,17 +1,28 @@
 from flask import Flask, render_template, request
-from automate import initBoard, definePinOut, writeToPort
+import RPi.GPIO as GPIO
+import sys
+
+def initBoard():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setwarnings(False)
+
+def definePinOut(pinNumber):
+    GPIO.setup(pinNumber, GPIO.OUT)
+
+def writeToPort(pinNumber, portState):
+    GPIO.output(pinNumber, portState)
 
 initBoard()
 definePinOut(7)
 definePinOut(11)
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-@app.route('/', methods=['GET'])
+@application.route('/', methods=['GET'])
 def index():
     return render_template('form.html')
     
-@app.route('/', methods=['POST'])
+@application.route('/', methods=['POST'])
 def submit():
     command = request.form['command']
     print(command)
@@ -31,4 +42,4 @@ def submit():
     return render_template('form.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    application.run(debug=True, host='0.0.0.0')
